@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alok Menon | Interactive Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.min.css" rel="stylesheet">
+    <!-- Chosen Palette: Cool Slate & Teal -->
+    <!-- Application Structure Plan: The application is structured as a true single-page app with a fixed sidebar for navigation and a main content area. This design was chosen over a long-scrolling page to create a more focused, app-like experience. Users can instantly switch between sections (Welcome, About, Experience, etc.) without losing their place. JavaScript dynamically shows and hides content panels, ensuring fast and fluid transitions. This information architecture prioritizes user control and non-linear exploration, allowing a recruiter or visitor to quickly access the information most relevant to them. -->
+    <!-- Visualization & Content Choices: 
+        - Report Info: Skill set (Python, AWS, etc.) -> Goal: Compare proficiency -> Viz/Method: Horizontal Bar Chart (Chart.js/Canvas) -> Interaction: Animated bars on load, tooltips on hover -> Justification: More visually engaging and easier to scan than a list, providing a quick understanding of strengths.
+        - Report Info: Experience/Volunteering History -> Goal: Show change over time -> Viz/Method: Vertical Timeline (HTML/Tailwind) -> Interaction: Hover effects on timeline items -> Justification: A timeline effectively tells a chronological story of growth and contribution, making it easier to follow Alok's journey.
+        - All other text is presented in clean, readable cards with clear typography to maintain focus on the content.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .content-section { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .sidebar-link.active { background-color: #0d9488; color: white; }
+        .sidebar-link.active i { color: white; }
+        .project-card { transition: all 0.3s ease; }
+        .project-card:hover { transform: translateY(-5px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .filter-btn.active { background-color: #14b8a6; color: white; }
+        .chart-container { position: relative; width: 100%; max-width: 600px; margin-left: auto; margin-right: auto; height: 400px; max-height: 50vh; }
+    </style>
+</head>
+<body class="flex bg-slate-100">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-16 md:w-64 bg-slate-800 text-white min-h-screen flex flex-col fixed">
+        <div class="h-20 flex items-center justify-center border-b border-slate-700">
+            <span class="text-2xl font-bold text-teal-400 hidden md:inline">Alok Menon</span>
+            <span class="text-2xl font-bold text-teal-400 md:hidden">AM</span>
+        </div>
+        <nav class="flex-grow pt-4">
+            <a href="#" class="sidebar-link flex items-center py-3 px-4 md:px-6 my-1 text-slate-300 hover:bg-slate-700 active" data-target="welcome">
+                <i class="ri-home-4-line text-xl text-slate-400"></i><span class="ml-4 hidden md:inline">Welcome</span>
+            </a>
+            <a href="#" class="sidebar-link flex items-center py-3 px-4 md:px-6 my-1 text-slate-300 hover:bg-slate-700" data-target="about">
+                <i class="ri-user-line text-xl text-slate-400"></i><span class="ml-4 hidden md:inline">About & Skills</span>
+            </a>
+            <a href="#" class="sidebar-link flex items-center py-3 px-4 md:px-6 my-1 text-slate-300 hover:bg-slate-700" data-target="experience">
+                <i class="ri-briefcase-line text-xl text-slate-400"></i><span class="ml-4 hidden md:inline">Experience</span>
+            </a>
+            <!-- Removed Projects navigation link -->
+            <a href="#" class="sidebar-link flex items-center py-3 px-4 md:px-6 my-1 text-slate-300 hover:bg-slate-700" data-target="education">
+                <i class="ri-book-open-line text-xl text-slate-400"></i><span class="ml-4 hidden md:inline">Education</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-700">
+            <a href="mailto:alokmenon500@gmail.com" class="w-full text-center bg-teal-600 hover:bg-teal-700 text-white font-semibold py-2 px-4 rounded-lg flex items-center justify-center">
+                 <i class="ri-send-plane-line"></i>
+                 <span class="hidden md:inline ml-2">Contact Me</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="ml-16 md:ml-64 flex-grow p-6 md:p-8">
+        
+        <!-- Welcome Section -->
+        <section id="welcome" class="content-section">
+            <div class="min-h-[calc(100vh-4rem)] flex items-center">
+                <div class="max-w-4xl">
+                    <h1 class="text-5xl md:text-7xl font-bold text-slate-800">Alok Menon</h1>
+                    <h2 class="text-2xl md:text-3xl text-teal-600 mt-2 font-medium">Computer Science Student & Developer</h2>
+                    <p class="mt-6 text-lg text-slate-600 max-w-2xl">
+                        I'm a passionate student with a deep love for coding and technology, exploring programming with hands-on experience in Python and AWS. Driven by curiosity, I build projects that solve real-world problems and I’m always eager to collaborate on exciting, innovative work.
+                    </p>
+                    <div class="mt-8 flex flex-wrap gap-4">
+                        <!-- Changed button target as projects section is removed -->
+                        <a href="#about" class="nav-button bg-teal-600 text-white font-semibold py-3 px-6 rounded-lg hover:bg-teal-700 transition" data-target="about">Learn More About Me</a>
+                        <a href="" target="_blank" class="bg-slate-200 text-slate-800 font-semibold py-3 px-6 rounded-lg hover:bg-slate-300 transition">Download Resume</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About & Skills Section -->
+        <section id="about" class="content-section hidden">
+             <h2 class="text-3xl font-bold text-slate-800 mb-6">About & Skills</h2>
+             <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-sm">
+                    <h3 class="text-xl font-semibold text-slate-700 mb-4">About Me</h3>
+                    <p class="text-slate-600 space-y-4">
+                        <span>
+                            I'm a student who loves coding and turning ideas into real projects. I’ve learned Python and AWS, and I’m always excited to learn more and improve my skills.
+                        </span>
+                        <span>
+                            I enjoy exploring new tech, solving problems, and working with others to build cool and useful software. Ready for any challenge that helps me grow!
+                        </span>
+                    </p>
+                </div>
+                <div class="lg:col-span-3 bg-white p-6 rounded-lg shadow-sm">
+                     <h3 class="text-xl font-semibold text-slate-700 mb-4">Technical Skills</h3>
+                     <div class="chart-container">
+                        <canvas id="skillsChart"></canvas>
+                     </div>
+                </div>
+             </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-slate-800 mb-8">Experience & Volunteering</h2>
+            <div class="relative border-l-2 border-teal-500 ml-4 pl-8 space-y-12">
+                <!-- Timeline Item -->
+                <div class="relative">
+                    <div class="absolute -left-[42px] top-1 h-4 w-4 rounded-full bg-teal-500 border-4 border-white"></div>
+                    <p class="text-sm font-semibold text-teal-600">2024 - 2025</p>
+                    <h3 class="text-xl font-bold text-slate-700 mt-1">Media Lead - Mulearn CASK</h3>
+                    <p class="text-slate-600 mt-2">Directed media efforts and initiatives within the Mulearn chapter, aiding students in the technology sector through effective communication and promotion of events.</p>
+                </div>
+                <!-- Timeline Item -->
+                 <div class="relative">
+                    <div class="absolute -left-[42px] top-1 h-4 w-4 rounded-full bg-teal-500 border-4 border-white"></div>
+                    <p class="text-sm font-semibold text-teal-600">2024 - 2025</p>
+                    <h3 class="text-xl font-bold text-slate-700 mt-1">Innovation and Entrepreneurship Development Centre (IEDC)</h3>
+                    <p class="text-slate-600 mt-2">Engaged in multiple technology ventures and events supported by IEDC, fostering a culture of innovation and entrepreneurship on campus.</p>
+                </div>
+                <!-- Timeline Item -->
+                <div class="relative">
+                    <div class="absolute -left-[42px] top-1 h-4 w-4 rounded-full bg-teal-500 border-4 border-white"></div>
+                    <p class="text-sm font-semibold text-teal-600">Sept 2023 - Present</p>
+                    <h3 class="text-xl font-bold text-slate-700 mt-1">NSS Candidate</h3>
+                    <p class="text-slate-600 mt-2">Actively engaged in National Service Scheme (NSS) initiatives, contributing to community service projects aimed at supporting individuals and improving local environments.</p>
+                </div>
+                 <!-- Timeline Item -->
+                 <div class="relative">
+                    <div class="absolute -left-[42px] top-1 h-4 w-4 rounded-full bg-teal-500 border-4 border-white"></div>
+                    <p class="text-sm font-semibold text-teal-600">2023</p>
+                    <h3 class="text-xl font-bold text-slate-700 mt-1">Solace Volunteer</h3>
+                    <p class="text-slate-600 mt-2">Contributed to community support programs, assisting with fundraising and direct support for individuals and families in need.</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Projects Section Removed -->
+
+        <!-- Education Section -->
+        <section id="education" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-slate-800 mb-6">Education</h2>
+            <div class="space-y-6">
+                <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <p class="text-sm font-semibold text-teal-600">Expected 2026</p>
+                    <h3 class="text-xl font-bold text-slate-700 mt-1">Bachelor of Science in Computer Science</h3>
+                    <p class="text-slate-600 font-medium">College of Applied Science, Kozhikode, KL</p>
+                    <p class="text-slate-500 mt-2">Focusing on core computer science principles, including algorithms, data structures, and software development, while actively participating in tech initiatives like IEDC.</p>
+                </div>
+                 <div class="bg-white p-6 rounded-lg shadow-sm">
+                    <p class="text-sm font-semibold text-teal-600">Completed 2019</p>
+                    <h3 class="text-xl font-bold text-slate-700 mt-1">Higher Secondary Education</h3>
+                    <p class="text-slate-600 font-medium">Govt Boys Higher Secondary School, Malappuram</p>
+                </div>
+                 
+            </div>
+        </section>
+    </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- DATA ---
+        const skillsData = {
+            labels: ['Python', 'AWS', 'MySQL', 'JavaScript', 'React', 'Next.js', 'HTML/CSS', 'Bootstrap'],
+            datasets: [{
+                label: 'Proficiency',
+                data: [85, 70, 75, 80, 75, 70, 95, 90],
+                backgroundColor: 'rgba(20, 184, 166, 0.7)',
+                borderColor: 'rgb(13, 148, 136)',
+                borderWidth: 1
+            }]
+        };
+
+        // --- NAVIGATION LOGIC ---
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const navButtons = document.querySelectorAll('.nav-button');
+        const contentSections = document.querySelectorAll('.content-section');
+        const skillsChartCanvas = document.getElementById('skillsChart');
+        let skillsChart;
+
+        function switchTab(targetId) {
+            contentSections.forEach(section => {
+                section.classList.toggle('hidden', section.id !== targetId);
+            });
+            sidebarLinks.forEach(link => {
+                link.classList.toggle('active', link.dataset.target === targetId);
+            });
+            
+            if (targetId === 'about' && !skillsChart) {
+                 renderSkillsChart();
+            }
+        }
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchTab(e.currentTarget.dataset.target);
+            });
+        });
+
+        navButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchTab(e.currentTarget.dataset.target);
+            });
+        });
+
+        // --- SKILLS CHART LOGIC ---
+        function renderSkillsChart() {
+             if (skillsChartCanvas) {
+                skillsChart = new Chart(skillsChartCanvas, {
+                    type: 'bar',
+                    data: skillsData,
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { beginAtZero: true, max: 100 }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `Proficiency: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // --- INITIALIZATION ---
+        if (document.getElementById('welcome').classList.contains('content-section') && !document.getElementById('welcome').classList.contains('hidden')) {
+            // If welcome is the default view, no need to render chart yet
+        } else {
+             renderSkillsChart(); // Render chart if 'about' is default
+        }
+    });
+</script>
+
+</body>
+</html>
